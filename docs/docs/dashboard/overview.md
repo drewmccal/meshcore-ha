@@ -106,6 +106,18 @@ page** — the console only works as a dashboard card (a device page can't rende
 the transcript), so you reference them by entity_id in the card below. Find the
 exact ids in Developer Tools → States (filter `cli`).
 
+:::note The sensor **state** is a command count, not the output
+The `sensor.*_cli_console` **state** is just a running count of commands (it
+climbs each time you run one). The actual command output is **not** in the state
+and **not** in the logbook — it lives in the sensor's **attributes**:
+`transcript` (a ready-to-display string), `history` (a structured list of
+`{timestamp, command, response, is_error}`), and `last_response` / `last_command`
+for the most recent one. Render the `transcript` attribute in a markdown card
+(below) to see responses. The state is deliberately a neutral count so that
+secrets — e.g. `send_login <contact> <password>` — never land in the recorder
+database. For automations, listen for the `meshcore_cli_response` event instead.
+:::
+
 The recommended card puts the input and the **button entities** in a single
 `entities` card (compact rows) so you don't get the oversized `button` *card*,
 then renders the transcript with a markdown card:
